@@ -154,7 +154,7 @@ class ServiceController extends Controller
 
     public function downgrade(Request $request)
     {
-        if (Product::find($request->product_id)->disk_size != Product::find(Service::find($request->id)->product_id)->disk_size) {
+        if (Product::find($request->product_id)->disk_size == Product::find(Service::find($request->id)->product_id)->disk_size) {
             Service::where('id', $request->id)->update([
                 'product_id' => $request->product_id
             ]);
