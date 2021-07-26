@@ -13,7 +13,7 @@
                     @forelse ($services as $property)
                         <li class="flex bg-gray-100 m-2 min-w-min flex-col rounded-3xl p-8 pt-5">
                             <div class="text-2xl font-bold text-center p-3 border-black border-b-2">
-                                {{$ProductNames::find($property->product_id)->name}}
+                                {{$ProductNames[$property->product_id]}}
                             </div>
                             <div class="text-2xl font-bold text-center w-64 p-3 border-black border-b-2">
                                 {{$property->name}}

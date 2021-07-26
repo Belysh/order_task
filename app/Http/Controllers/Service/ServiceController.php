@@ -37,11 +37,13 @@ class ServiceController extends Controller
     {
         $user = auth()->user();
         $services = User::find($user->id)->service;
-        $ProductNames = Product::class;
+        $products = array_flip(array_map(function($element) {
+            return $element['id'];
+        }, $this->renderSerives()));
 
         return view('services.show', [
             'services' => $services,
-            'ProductNames' => $ProductNames
+            'ProductNames' => $products
         ]);
     }
 
