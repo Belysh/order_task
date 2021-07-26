@@ -10,7 +10,30 @@ use App\Models\Product;
 
 class ServiceController extends Controller
 {
-    public function show()
+
+    private function getProductByServiceId() {
+
+    }
+
+    private function renderSerives() {
+        $products = Product::all();
+        $productsArray = [];
+        
+        for ($i = 0; $i < count($products); $i++) {
+            $arr = Array(
+                'Cores number: ' => $products[$i]->cores_number,
+                'Memory size: ' => $products[$i]->memory_size,
+                'Disk size: ' => $products[$i]->disk_size,
+                'id' => $products[$i]->id
+            );
+            $productsArray[$products[$i]->name] = $arr;
+        }
+
+        return $productsArray;
+        
+    }
+
+    public function index()
     {
         $user = auth()->user();
         $services = User::find($user->id)->service;
@@ -24,18 +47,7 @@ class ServiceController extends Controller
 
     public function create()
     {
-        $products = Product::all();
-        $productsArray = [];
-
-        for ($i = 0; $i < count($products); $i++) {
-            $arr = Array(
-                'Cores number: ' => $products[$i]->cores_number,
-                'Memory size: ' => $products[$i]->memory_size,
-                'Disk size: ' => $products[$i]->disk_size,
-                'id' => $products[$i]->id
-            );
-            $productsArray[$products[$i]->name] = $arr;
-        }
+        $productsArray = $this->renderSerives();
 
         return view('services.create', [
             'productsArray' => $productsArray
@@ -89,24 +101,13 @@ class ServiceController extends Controller
     }
 
     public function showUpgrade(Request $request)
-    {
-        $products = Product::all();
-        $product_memory = Product::find(Service::find($request->id)->product_id)->memory_size;
-        $productsArray = [];
+    {    
+        $productsArray = array_filter($this->renderSerives(), function($element) use ($request) {
+            if($element['Memory size: '] > Product::find(Service::find($request->id)->product_id)->memory_size) {
+                return $element;
+            };
+        });
 
-        for ($i = 0; $i < count($products); $i++) {
-            if($product_memory < $products[$i]->memory_size) {
-                $arr = Array(
-                    'Cores number: ' => $products[$i]->cores_number,
-                    'Memory size: ' => $products[$i]->memory_size,
-                    'Disk size: ' => $products[$i]->disk_size,
-                    'id' => $products[$i]->id
-                );
-                $productsArray[$products[$i]->name] = $arr;
-            }
-        }
-
-        
         return view('services.upgrade', [
             'productsArray' => $productsArray,
             'id' => $request->id,
@@ -117,7 +118,6 @@ class ServiceController extends Controller
 
     public function upgrade(Request $request)
     {
-
         Service::where('id', $request->id)->update([
             'product_id' => $request->product_id
         ]);
@@ -127,21 +127,11 @@ class ServiceController extends Controller
 
     public function showDowngrade(Request $request)
     {
-        $products = Product::all();
-        $product_memory = Product::find(Service::find($request->id)->product_id)->memory_size;
-        $productsArray = [];
-
-        for ($i = 0; $i < count($products); $i++) {
-            if($product_memory > $products[$i]->memory_size) {
-                $arr = Array(
-                    'Cores number: ' => $products[$i]->cores_number,
-                    'Memory size: ' => $products[$i]->memory_size,
-                    'Disk size: ' => $products[$i]->disk_size,
-                    'id' => $products[$i]->id
-                );
-                $productsArray[$products[$i]->name] = $arr;
-            }
-        }
+        $productsArray = array_filter($this->renderSerives(), function($element) use ($request) {
+            if($element['Memory size: '] < Product::find(Service::find($request->id)->product_id)->memory_size) {
+                return $element;
+            };
+        });
 
         
         return view('services.downgrade', [

@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\ServiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,3 +18,12 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/services', [ServiceController::class, 'index']);
+Route::get('/services/{id}', [ServiceController::class, 'show']);
+Route::get('/services/delete/{id}', [ServiceController::class, 'destroy']);
+
+Route::post('/services/edit/{id}', [ServiceController::class, 'update']);
+Route::post('/services/add', [ServiceController::class, 'store']);
+Route::post('/services/upgrade/{id}/{product_id}', [ServiceController::class, 'update']);
+Route::post('/services/downgrade/{id}/{product_id}', [ServiceController::class, 'update']);
