@@ -1,0 +1,29 @@
+<?php
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\ServiceController;
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| is assigned the "api" middleware group. Enjoy building your API!
+|
+*/
+
+Route::middleware('auth:api')->get('/user', function (Request $request) {
+    return $request->user();
+});
+
+Route::get('/services', [ServiceController::class, 'index']);
+Route::get('/services/{id}', [ServiceController::class, 'show']);
+Route::get('/services/delete/{id}', [ServiceController::class, 'destroy']);
+
+Route::post('/services/edit/{id}', [ServiceController::class, 'update']);
+Route::post('/services/add', [ServiceController::class, 'store']);
+Route::post('/services/upgrade/{id}/{product_id}', [ServiceController::class, 'upgrade']);
+Route::post('/services/downgrade/{id}/{product_id}', [ServiceController::class, 'downgrade']);
